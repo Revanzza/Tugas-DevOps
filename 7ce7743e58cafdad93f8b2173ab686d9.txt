@@ -1,0 +1,20 @@
+UNIVERSITAS PEMBANGUNAN NASIONAL VETERAN JAWA TIMUR
+Jalan Raya Rungkut Madya, Gunung Anyar, Surabaya 60294
+SISTEM INFORMASI AKADEMIK (SIAMIK)
+Daftar Server Untuk KRS Semester Ganjil TA.2024/2025
+1. FEB : 
+Server 01
+ (dalam konfirmasi)
+3. FT : 
+Server 03
+ (dalam konfirmasi)
+4. FISIP : 
+Server 04
+ (live)
+6. FIK : 
+Server 07
+ (live)
+7. FK : 
+Server 08
+ (live)
+Segera melakukan WAR
