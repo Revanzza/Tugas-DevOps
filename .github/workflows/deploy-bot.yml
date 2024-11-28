@@ -33,7 +33,7 @@ jobs:
     - name: Copy files to EC2
       run: |
         # Menyalin semua file dari repo ke EC2
-        scp -o StrictHostKeyChecking=no -i private_key.pem -r * user@your-ec2-ip:/home/your-username/discord-bot/
+        scp -o StrictHostKeyChecking=no -i private_key.pem -r * ubuntu@35.174.12.119:/home/your-username/discord-bot/
         env:
           AWS_EC2_SSH_KEY: ${{ secrets.AWS_EC2_SSH_KEY }}
 
