@@ -24,34 +24,27 @@ jobs:
     # Step 3: Add private key from GitHub Secrets
     - name: Add SSH private key
       run: |
-        # Menyimpan private key yang ada di Secrets ke file private_key.pem
         echo "${{ secrets.AWS_EC2_SSH_KEY }}" > private_key.pem
-        # Mengatur izin yang tepat untuk private key
         chmod 600 private_key.pem
 
     # Step 4: Copy files to EC2
     - name: Copy files to EC2
       run: |
-        # Menyalin semua file dari repo ke EC2
         scp -o StrictHostKeyChecking=no -i private_key.pem -r * ubuntu@35.174.12.119:/home/ubuntu/discord-bot/
-        env:
-          AWS_EC2_SSH_KEY: ${{ secrets.AWS_EC2_SSH_KEY }}
 
     # Step 5: Install dependencies on EC2
     - name: Install dependencies on EC2
       run: |
-        # Instal dependensi di EC2 setelah file disalin
-        ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_HOST }} << 'EOF'
-        cd /home/${{ secrets.AWS_EC2_USER }}/discord-bot/
+        ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@35.174.12.119 << 'EOF'
+        cd /home/ubuntu/discord-bot/
         pip3 install -r requirements.txt
         EOF
 
     # Step 6: Run KRS App on EC2
     - name: Run KRS App on EC2
       run: |
-        # Menjalankan aplikasi KRS di EC2
-        ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_HOST }} << 'EOF'
-        cd /home/${{ secrets.AWS_EC2_USER }}/discord-bot/
+        ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@35.174.12.119 << 'EOF'
+        cd /home/ubuntu/discord-bot/
         export DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
         export DISCORD_CHANNEL_ID=${{ secrets.DISCORD_CHANNEL_ID }}
         export MONITOR_URL=${{ secrets.MONITOR_URL }}
@@ -61,8 +54,7 @@ jobs:
     # Step 7: Fetch KRS app log from EC2
     - name: Fetch KRS app log from EC2
       run: |
-        # Menarik file log dari EC2
-        scp -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_HOST }}:/home/${{ secrets.AWS_EC2_USER }}/discord-bot/KRS-app.log .
+        scp -o StrictHostKeyChecking=no -i private_key.pem ubuntu@35.174.12.119:/home/ubuntu/discord-bot/KRS-app.log .
 
     # Step 8: Save KRS app log as artifact
     - name: Save KRS app log as artifact
