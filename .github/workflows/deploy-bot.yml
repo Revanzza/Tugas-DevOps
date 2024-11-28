@@ -11,38 +11,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout kode dari repository
+    # Step 1: Checkout code dari repository
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Step 2: Setup Python environment untuk menjalankan dependensi lokal (opsional)
+    # Step 2: Setup Python environment
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 
-    # Step 3: Tambahkan private key SSH untuk akses ke EC2
+    # Step 3: Add private key from GitHub Secrets
     - name: Add SSH private key
       run: |
+        # Menyimpan private key yang ada di Secrets ke file private_key.pem
         echo "${{ secrets.AWS_EC2_SSH_KEY }}" > private_key.pem
+        # Mengatur izin yang tepat untuk private key
         chmod 600 private_key.pem
 
-    # Step 4: Copy file ke EC2
+    # Step 4: Copy files to EC2
     - name: Copy files to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -i private_key.pem -r . ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_HOST }}:/home/${{ secrets.AWS_EC2_USER }}/discord-bot/
+        # Menyalin semua file dari repo ke EC2
+        scp -o StrictHostKeyChecking=no -i private_key.pem -r ./ ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_HOST }}:/home/${{ secrets.AWS_EC2_USER }}/discord-bot/
 
-    # Step 5: Install dependensi di EC2
+    # Step 5: Install dependencies on EC2
     - name: Install dependencies on EC2
       run: |
+        # Instal dependensi di EC2 setelah file disalin
         ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_HOST }} << 'EOF'
         cd /home/${{ secrets.AWS_EC2_USER }}/discord-bot/
         pip3 install -r requirements.txt
         EOF
 
-    # Step 6: Jalankan aplikasi KRS-app.py di EC2
+    # Step 6: Run KRS App on EC2
     - name: Run KRS App on EC2
       run: |
+        # Menjalankan aplikasi KRS di EC2
         ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_HOST }} << 'EOF'
         cd /home/${{ secrets.AWS_EC2_USER }}/discord-bot/
         export DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
@@ -51,25 +56,19 @@ jobs:
         nohup python3 KRS-app.py > KRS-app.log 2>&1 &
         EOF
 
-    # Step 7: Ambil log dari EC2 untuk debugging
+    # Step 7: Fetch KRS app log from EC2
     - name: Fetch KRS app log from EC2
       run: |
+        # Menarik file log dari EC2
         scp -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_HOST }}:/home/${{ secrets.AWS_EC2_USER }}/discord-bot/KRS-app.log .
 
-    # Step 8: Simpan log sebagai artefak
+    # Step 8: Save KRS app log as artifact
     - name: Save KRS app log as artifact
       uses: actions/upload-artifact@v3
       with:
         name: krs-app-log
         path: KRS-app.log
 
-    # Step 9: Simpan kode sumber sebagai artefak (opsional)
-    - name: Save source code as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: source-code
-        path: .
-
-    # Step 10: Bersihkan file private key
+    # Step 9: Clean up SSH key
     - name: Clean up SSH key
       run: rm private_key.pem
