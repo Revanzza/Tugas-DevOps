@@ -7,13 +7,13 @@ Server 01
  (live)
 3. FT : 
 Server 03
- (live)
+ (dalam konfirmasi)
 4. FISIP : 
 Server 04
- (live)
+ (dalam konfirmasi)
 6. FIK : 
 Server 07
- (live)
+ (dalam konfirmasi)
 7. FK : 
 Server 08
  (live)
