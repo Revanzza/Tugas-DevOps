@@ -33,7 +33,9 @@ jobs:
     - name: Copy files to EC2
       run: |
         # Menyalin semua file dari repo ke EC2
-        scp -o StrictHostKeyChecking=no -i private_key.pem -r ./ ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_HOST }}:/home/${{ secrets.AWS_EC2_USER }}/discord-bot/
+        scp -o StrictHostKeyChecking=no -i private_key.pem -r * user@your-ec2-ip:/home/your-username/discord-bot/
+        env:
+          AWS_EC2_SSH_KEY: ${{ secrets.AWS_EC2_SSH_KEY }}
 
     # Step 5: Install dependencies on EC2
     - name: Install dependencies on EC2
