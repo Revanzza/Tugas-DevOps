@@ -63,8 +63,8 @@ jobs:
     - name: Save KRS app log as artifact
       uses: actions/upload-artifact@v4
       with:
-        name: krs-app-log
-        path: /home/ubuntu/discord-bot/krs-app.log
+        name: KRS-app-log
+        path: /home/ubuntu/discord-bot/KRS-app.log
 
     # Step 9: Clean up SSH key
     - name: Clean up SSH key
